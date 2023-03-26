@@ -5,12 +5,12 @@ include "vendor/autoload.php";
 
 function check($url, $num){
 	
-	for ($i = 1111; $i <= $num; $i++){
+	for ($i = 6001; $i <= $num; $i++){
 
 		$u = $url.$i;
 		list($http_Code, $response) = is_working_url($u);
 		if (strpos($response, 'File not found') !== false){
-			echo "Сторінка $i не знайдена\n";
+			echo "\033[31m Сторінка $i не знайдена \033[32m \n";
 		} elseif (strpos($response, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
 			$match = preg_match('/file:"\K[^"]+/', $response, $matches);
 			$name = $matches[0];
@@ -21,7 +21,7 @@ function check($url, $num){
 
 			//print_r($films);
 						
-			echo "Сторінка $url$i знайдена $films[5]\n";
+			echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] 033[34m \n";
 
 			db($url, $films[5]);
 		
@@ -65,13 +65,13 @@ function db($links, $title){
 	
 	]);
 
-	printf("Insert %d documents\n", $insert->getInsertedCount());
+	printf(" \033[33m Insert %d documents \033[33m\n", $insert->getInsertedCount());
 
 }
 
 
 
 $url = "https://tortuga.wtf/vod/";
-$num = 6000;
+$num = 7000;
 
 check($url, $num);
