@@ -21,7 +21,7 @@ function check($url, $num){
 
 			//print_r($films);
 						
-			echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] 033[34m \n";
+			echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
 
 			db($url, $films[5]);
 		
