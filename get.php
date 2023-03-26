@@ -1,4 +1,8 @@
 <?php
+
+include "vendor/autoload.php";
+
+
 function check($url, $num){
 	
 	for ($i = 1111; $i <= $num; $i++){
@@ -18,6 +22,8 @@ function check($url, $num){
 			//print_r($films);
 						
 			echo "Сторінка $url$i знайдена $films[5]\n";
+
+			db($url, $films[5]);
 		
 		} else {
 		
@@ -47,6 +53,23 @@ function is_working_url($u){
 
 	return array($http_Code, $response);
 }
+
+function db($links, $title){
+
+	$coll = (new MongoDB\Client)->films->links;
+
+	$insert = $coll->insertOne([
+	
+		'link' => $links,
+		'title' => $title
+	
+	]);
+
+	printf("Insert %d documents\n", $insert->getInsertedCount());
+
+}
+
+
 
 $url = "https://tortuga.wtf/vod/";
 $num = 6000;
