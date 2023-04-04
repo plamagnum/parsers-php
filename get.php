@@ -11,7 +11,7 @@ $options = getopt('', ['file', 'mongo']);
 process($options);
 
 
-function prosess($options){
+function process($options){
 
 	if(isset($options['file'])){
 
@@ -29,7 +29,7 @@ function prosess($options){
 		$url = 'https://tortuga.wtf/vod/';
 		$num = 2000;
 		check($url, $num);
-		db($url, $films[5])	
+		db($url, $films[5]);	
 	
 	}
 
