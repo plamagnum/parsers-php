@@ -6,10 +6,71 @@ error_reporting(E_ALL);
 
 include "vendor/autoload.php";
 
-global $films;
+$options = getopt('', ['file', 'mongo']);
 
-$films = array();
+process($options);
+//process(is_array($argv) ? $argv : array());
 
+function process($options){
+
+	if(isset($options['file'])){
+		$url = 'https://tortuga.wtf/vod/';
+		$num = 6000;
+
+		for($i = 7000; $num <= $i; $i++){
+			$u = $url.$i;
+			list($http_Code, $response) = is_working_url($u);
+			if (strpos($response, 'File not found') !== false){
+				echo "\033[31m Сторінка $i не знайдена \033[32m \n";
+			}elseif (strpos($response, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
+				$match = preg_match('/file:"\K[^"]+/', $response, $matches);
+				$name = $matches[0];
+			
+				$films = explode('/', $name);
+				print_r($films);
+				$text = 'films.txt';
+				file_put_contents($text, $films[5], FILE_APPEND | LOCK_EX);
+				echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
+			} else {
+				echo "Сторінка $i: не визначена\n";
+			}	
+		}
+	}
+}
+
+	
+if (isset($options['mongo'])){
+	
+		$url = "https://tortuga.wtf/vod";
+		$num = 6000;
+		//check($url, $num);
+		//db($url, $films[5]);
+		//print_r($films);
+
+}
+
+
+function is_working_url($u){
+
+
+
+	$handle = curl_init();
+	curl_setopt($handle, CURLOPT_URL, $u);
+	curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($handle, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($handle, CURLOPT_MAXREDIRS, 10);
+	//curl_setopt($handle, );
+
+	$response = curl_exec($handle);
+	$http_Code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+	curl_close($handle);
+
+	return array($http_Code, $response);
+}
+//process(is_array($argv) ? $argv : array());
+
+var_dump(process());
+/*
 function check($url, $num){
 	
 	for ($i = 7001; $i <= $num; $i++){
@@ -25,46 +86,7 @@ function check($url, $num){
 			//$films = preg_split('/file:.*\/(\w+\.\w+_\d+)_.*\//', $name);
 			//global $films;
 			$films = explode('/', $name);
-
-
-			//print_r($films);
-			/*
-			$options = [
-
-				'save_to_file' => 'true',
-				'file_name'	   => '',
-				'save_toMongo' => 'false'
-			];
-
-			$opt = getopt('', $options);
-
-			var_dump($options);
-
-			if(isset($opt['save_to_file'])){
-	
-			//$url = "https://tortuga.wtf/vod";
-			//$num = 7000;
-	
-			//check($url, $num);
-			file_put_contents($options['file_name'], $url, FILE_APPEND | LOCK_EX);
-	
-			}
-
-
-			if(isset($options['save_toMongo'])){
-	
-			$url = "https://tortuga.wtf/vod";
-			$num = 7000;
-			//check($url, $num);
-			db($url, $films[5]);
-			//print_r($films);
-
-			}
-			*/
-			
-
-
-
+			//return $films[5]; 
 
 			echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
 
@@ -75,6 +97,7 @@ function check($url, $num){
 			echo "Сторінка $i: не визначена\n";
 		}
 	}
+
 
 }
 
@@ -113,53 +136,4 @@ function db($links, $title){
 	printf(" \033[33m Insert %d documents \033[33m\n", $insert->getInsertedCount());
 
 }
-
-
-$options = [
-
-	'save_to_file' => 'true',
-	'file_name'	   => '',
-	'save_toMongo' => 'false'
-];
-/*
-$cliOptions = getopt('', ['save_to_file', 'file_name:', 'save_toMongo']);
- 
-$options = array_merge($options, $cliOptions);
-
-$url = "https://tortuga.wtf/vod";
-	$num = 7000;
-	
-	check($url, $num);
- */
-//$options = ['save_to_file', 'file_name:','save_toMongo'];
-
-$opt = getopt('', $options);
-
-var_dump($options);
-
-if(isset($opt['save_to_file'])){
-	
-	$url = "https://tortuga.wtf/vod";
-	$num = 6000;
-	
-	check($url, $num);
-	print_r(check());
-	file_put_contents($options['file_name'], $url, FILE_APPEND | LOCK_EX);
-	
-}
-
-
-if(isset($options['save_toMongo'])){
-	
-	$url = "https://tortuga.wtf/vod";
-	$num = 6000;
-	check($url, $num);
-	db($url, $films[5]);
-	print_r($films);
-
-}
-/*
-$url = "https://tortuga.wtf/vod";
-$num = 6000;
-check($url, $num);
  */
