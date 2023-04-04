@@ -1,11 +1,18 @@
 <?php
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 include "vendor/autoload.php";
 
+global $films;
+
+$films = array();
 
 function check($url, $num){
 	
-	for ($i = 6001; $i <= $num; $i++){
+	for ($i = 7001; $i <= $num; $i++){
 
 		$u = $url.$i;
 		list($http_Code, $response) = is_working_url($u);
@@ -16,14 +23,52 @@ function check($url, $num){
 			$name = $matches[0];
 			//print_r($name);
 			//$films = preg_split('/file:.*\/(\w+\.\w+_\d+)_.*\//', $name);
+			//global $films;
 			$films = explode('/', $name);
 
 
 			//print_r($films);
-						
+			/*
+			$options = [
+
+				'save_to_file' => 'true',
+				'file_name'	   => '',
+				'save_toMongo' => 'false'
+			];
+
+			$opt = getopt('', $options);
+
+			var_dump($options);
+
+			if(isset($opt['save_to_file'])){
+	
+			//$url = "https://tortuga.wtf/vod";
+			//$num = 7000;
+	
+			//check($url, $num);
+			file_put_contents($options['file_name'], $url, FILE_APPEND | LOCK_EX);
+	
+			}
+
+
+			if(isset($options['save_toMongo'])){
+	
+			$url = "https://tortuga.wtf/vod";
+			$num = 7000;
+			//check($url, $num);
+			db($url, $films[5]);
+			//print_r($films);
+
+			}
+			*/
+			
+
+
+
+
 			echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
 
-			db($url, $films[5]);
+			//db($url, $films[5]);
 		
 		} else {
 		
@@ -70,8 +115,51 @@ function db($links, $title){
 }
 
 
+$options = [
 
-$url = "https://tortuga.wtf/vod/";
-$num = 7000;
+	'save_to_file' => 'true',
+	'file_name'	   => '',
+	'save_toMongo' => 'false'
+];
+/*
+$cliOptions = getopt('', ['save_to_file', 'file_name:', 'save_toMongo']);
+ 
+$options = array_merge($options, $cliOptions);
 
+$url = "https://tortuga.wtf/vod";
+	$num = 7000;
+	
+	check($url, $num);
+ */
+//$options = ['save_to_file', 'file_name:','save_toMongo'];
+
+$opt = getopt('', $options);
+
+var_dump($options);
+
+if(isset($opt['save_to_file'])){
+	
+	$url = "https://tortuga.wtf/vod";
+	$num = 6000;
+	
+	check($url, $num);
+	print_r(check());
+	file_put_contents($options['file_name'], $url, FILE_APPEND | LOCK_EX);
+	
+}
+
+
+if(isset($options['save_toMongo'])){
+	
+	$url = "https://tortuga.wtf/vod";
+	$num = 6000;
+	check($url, $num);
+	db($url, $films[5]);
+	print_r($films);
+
+}
+/*
+$url = "https://tortuga.wtf/vod";
+$num = 6000;
 check($url, $num);
+ */
