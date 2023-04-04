@@ -9,59 +9,62 @@ include "vendor/autoload.php";
 $options = getopt('', ['file', 'mongo']);
 
 process($options);
-//process(is_array($argv) ? $argv : array());
 
-function process($options){
+
+function prosess($options){
 
 	if(isset($options['file'])){
-		$url = 'https://tortuga.wtf/vod/';
-		$num = 6000;
 
-		for($i = 7000; $num <= $i; $i++){
-			$u = $url.$i;
-			list($http_Code, $response) = is_working_url($u);
-			if (strpos($response, 'File not found') !== false){
-				echo "\033[31m Сторінка $i не знайдена \033[32m \n";
-			}elseif (strpos($response, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
-				$match = preg_match('/file:"\K[^"]+/', $response, $matches);
-				$name = $matches[0];
-			
-				$films = explode('/', $name);
-				//print_r($films);
-				$text = 'films.txt';
-				file_put_contents($text, $films[5], FILE_APPEND | LOCK_EX);
-				echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
-			} else {
-				echo "Сторінка $i: не визначена\n";
-			}	
-		}
+		$url = 'https://tortuga.wtf/vod/';
+		$num = 2000;
+
+		check($url, $num);
+		$text = 'new_films.txt';
+		file_put_contents($text, $films[5], FILE_APPEND | LOCK_EX);
+	
 	}
+
+	if(isset($options['mongo'])){
+
+		$url = 'https://tortuga.wtf/vod/';
+		$num = 2000;
+		check($url, $num);
+		db($url, $films[5])	
+	
+	}
+
 }
 
-	
-if (isset($options['mongo'])){
-	
-		$url = 'https://tortuga.wtf/vod/';
-		$num = 6000;
 
-		for($i = 7000; $num <= $i; $i++){
-			$u = $url.$i;
-			list($http_Code, $response) = is_working_url($u);
-			if (strpos($response, 'File not found') !== false){
-				echo "\033[31m Сторінка $i не знайдена \033[32m \n";
-			}elseif (strpos($response, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
-				$match = preg_match('/file:"\K[^"]+/', $response, $matches);
-				$name = $matches[0];
+function check($url, $num){
+
+	for($i = 3000; $i <= $num; $i++){
+	
+		$u = $url.$i;
+
+		list($http_Code, $response) = is_working_url($u);
+
+		if(strpos($response, 'File not found') !== false){
+
+			echo "Сторінка $i не знайдена\n";
+		
+		} elseif (strpos($resonse, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
 			
-				$films = explode('/', $name);
-				//print_r($films);
-				$text = 'films.txt';
-				db($url, $films[5]);
-				echo "\033[32m Сторінка $url$i знайдена\033[32m \033[34m $films[5] \033[34m \n";
-			} else {
-				echo "Сторінка $i: не визначена\n";
-			}	
+			$match = preg_match('/file:"\K[^"]+/', $response, $matches);
+			$name = $matches[0];
+			$films = explode('/', $name);
+
+
+			echo "Сторінка $i: $url $films[5]\n";
+
+		} else {
+		
+			echo "Сторінка $i не визначена\n";
+
 		}
+
+	}
+
 }
 
 
