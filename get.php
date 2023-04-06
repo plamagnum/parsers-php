@@ -14,20 +14,28 @@ process($options);
 function process($options){
 
 	if(isset($options['file'])){
-
+		global $ret;
 		$url = 'https://tortuga.wtf/vod/';
-		$num = 2000;
-
-		check($url, $num);
+		$num = 4000;
+		var_dump(check($url, $num));
+		
+		$a = check($url, $num);
+		/*
+		var_dump($a);
 		$text = 'new_films.txt';
-		file_put_contents($text, $films[5], FILE_APPEND | LOCK_EX);
+		file_put_contents($text, $a, FILE_APPEND | LOCK_EX);
+		//var_dump(check($url, $num));
+		 */
+		foreach($a as $b){
+			echo $b;
+		} 
 	
 	}
 
 	if(isset($options['mongo'])){
 
 		$url = 'https://tortuga.wtf/vod/';
-		$num = 2000;
+		$num = 4000;
 		check($url, $num);
 		db($url, $films[5]);	
 	
@@ -37,6 +45,9 @@ function process($options){
 
 
 function check($url, $num){
+
+	global $ret;
+	$ret = '';
 
 	for($i = 3000; $i <= $num; $i++){
 	
@@ -48,14 +59,15 @@ function check($url, $num){
 
 			echo "Сторінка $i не знайдена\n";
 		
-		} elseif (strpos($resonse, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
+		} elseif (strpos($response, 'xhr.open("POST", "https://db.tortuga.wtf/engine/modules/playerjsstat/site/ajax.php");') !==false){
 			
 			$match = preg_match('/file:"\K[^"]+/', $response, $matches);
 			$name = $matches[0];
 			$films = explode('/', $name);
+			$ret .= $films[5];
 
-
-			echo "Сторінка $i: $url $films[5]\n";
+			echo "Сторінка $i: $url $ret\n";
+			//return $ret;
 
 		} else {
 		
@@ -64,6 +76,7 @@ function check($url, $num){
 		}
 
 	}
+	return $ret;
 
 }
 
